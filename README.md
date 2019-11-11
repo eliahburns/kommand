@@ -9,10 +9,11 @@ the other. And no process is created until `out()` is called. `out()` returns a
 any method that extends a Kotlin `Flow<String>` or whatever type you decide to 
 transform it into.
 
-It has all of the hits, but may be something you're looking for. In that case, 
+It has all of the hits, but may be missing something you're looking for. In that case, 
 feel free to extend it and submit a pull request. 
  
 
+#### Examplezz:
 ```kotlin
 fun main() = runBlocking {
 
