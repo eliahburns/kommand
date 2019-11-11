@@ -1,9 +1,6 @@
 package io.github.eliahburns.kommand.dsl.shell
 
-import io.github.eliahburns.kommand.KommandArgsBuilder
-import io.github.eliahburns.kommand.Kommands
-import io.github.eliahburns.kommand.kommand
-import io.github.eliahburns.kommand.kommands
+import io.github.eliahburns.kommand.*
 
 
 inline fun ls(block: KommandArgsBuilder.() -> Unit) =
@@ -20,19 +17,17 @@ inline fun Kommands.ls(crossinline block: KommandArgsBuilder.() -> Unit): Komman
             }
 )
 
-// TODO: include dir
 inline fun cd(dir: String = "", block: KommandArgsBuilder.() -> Unit) =
     kommands {
         name = "cd"
-        args = KommandArgsBuilder().apply(block).build()
+        args = KommandArgsBuilder().also { if (dir.isNotEmpty()) it.add(dir) }.apply(block).build()
     }
 
-// TODO: include dir
-inline fun Kommands.cd(dir: String = "", crossinline block: KommandArgsBuilder.() -> Unit): Kommands = copy(
+inline fun Kommands.cd(dir: String = "", block: KommandArgsBuilder.() -> Unit): Kommands = copy(
     commands = commands +
             kommand {
                 name = "cd"
-                args = KommandArgsBuilder().apply(block).build()
+                args = KommandArgsBuilder().also { if (dir.isNotEmpty()) it.add(dir) }.apply(block).build()
             }
 )
 

@@ -49,9 +49,12 @@ fun Kommands.startPipeline(): List<Process> {
 }
 
 fun Kommands.out(): Flow<String> = channelFlow {
+
+    val processes = this@out.startPipeline()
+    processes.forEach { proc -> logger.debug { "started process with pid ${proc.pid()} on invocation of 'out()'" } }
+
     launch(Dispatchers.IO) {
-        this@out
-            .startPipeline()
+        processes
             .last()
             .inputStream
             .bufferedReader()
@@ -60,6 +63,14 @@ fun Kommands.out(): Flow<String> = channelFlow {
                     send(line)
                 }
             }
+    }
+
+    invokeOnClose { t ->
+        t?.let { logger.debug { "closing 'out()' after $t" } }
+        processes.forEach { proc ->
+            logger.debug { "stopping process with pid ${proc.pid()} on 'out()' close" }
+            proc.destroy()
+        }
     }
 }
 
@@ -109,6 +120,7 @@ fun main() = runBlocking {
 
     ping(host = "google.com") { }
         .out()
+        .take(3)
         .collect { println(it) }
 
 }

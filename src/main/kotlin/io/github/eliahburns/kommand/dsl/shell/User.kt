@@ -90,7 +90,6 @@ inline fun Kommands.userdel(crossinline block: KommandArgsBuilder.() -> Unit): K
             }
 )
 
-
 inline fun groups(block: KommandArgsBuilder.() -> Unit) =
     kommands {
         name = "groups"
