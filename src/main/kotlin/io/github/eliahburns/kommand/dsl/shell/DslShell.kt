@@ -3,6 +3,34 @@ package io.github.eliahburns.kommand.dsl.shell
 import io.github.eliahburns.kommand.*
 
 
+inline fun KommandShell.ls(block: KommandArgsBuilder.() -> Unit) = copy(
+    commands = commands + kommand {
+        name = "ls"
+        args = KommandArgsBuilder().apply(block).build()
+    }
+)
+
+inline fun KommandShell.cd(block: KommandArgsBuilder.() -> Unit) = copy(
+    commands = commands + kommand {
+        name = "cd"
+        args = KommandArgsBuilder().apply(block).build()
+    }
+)
+
+inline fun KommandShell.grep(block: KommandArgsBuilder.() -> Unit) = copy(
+    commands = commands + kommand {
+        name = "grep"
+        args = KommandArgsBuilder().apply(block).build()
+    }
+)
+
+inline fun KommandShell.wc(block: KommandArgsBuilder.() -> Unit) = copy(
+    commands = commands + kommand {
+        name = "wc"
+        args = KommandArgsBuilder().apply(block).build()
+    }
+)
+
 inline fun ls(block: KommandArgsBuilder.() -> Unit) =
     kommands {
         name = "ls"

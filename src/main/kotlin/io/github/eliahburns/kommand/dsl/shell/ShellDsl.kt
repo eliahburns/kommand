@@ -8,14 +8,18 @@ val DEFAULT_ENV = mapOf<String, String>()
 
 val DEFAULT_COMMANDS = listOf<Kommand>()
 
+typealias Kommands = List<Kommand>
+
+fun mutableEnv() = mutableMapOf<String, String>()
+
 data class KommandShell(
     val env: ShellEnvironment = DEFAULT_ENV,
-    val commands: List<Kommand> = DEFAULT_COMMANDS
+    val commands: Kommands = DEFAULT_COMMANDS
 )
 
 @ShellDsl
 class KommandShellBuilder {
-    private var env = mutableMapOf<String, String>()
+    private var env = mutableEnv()
 
     fun env(block: ShellEnvironmentBuilder.() -> Unit): ShellEnvironment {
         env = ShellEnvironmentBuilder().apply(block).build().toMutableMap()
@@ -29,7 +33,7 @@ typealias ShellEnvironment = Map<String, String>
 
 @ShellDsl
 class ShellEnvironmentBuilder {
-    private val env = mutableMapOf<String, String>()
+    private val env = mutableEnv()
 
     infix fun String.to(value: String): Pair<String, String> {
         env[this] = value
