@@ -1,146 +1,65 @@
 package io.github.eliahburns.kommand.simple
 
+import io.github.eliahburns.kommand.dsl.shell.grep
+import io.github.eliahburns.kommand.dsl.shell.ls
+import io.github.eliahburns.kommand.dsl.shell.ping
+import io.github.eliahburns.kommand.dsl.shell.wc
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import java.lang.RuntimeException
+import mu.KotlinLogging
 import kotlin.properties.Delegates
 
+private val logger = KotlinLogging.logger {  }
 
-sealed class Kommand {
+data class Kommand(
+    val command: String,
+    val args: List<KommandArg>
+)
 
-    abstract val command: String
+fun Kommand.toKommands() = Kommands(listOf(this), mapOf())
 
-    abstract val envVars: Map<String, String>
+data class Kommands(
+    val commands: List<Kommand>,
+    val envVars: Map<String, String>
+)
 
-    abstract val args: List<KommandArg>
-
-    data class Base(
-        override val command: String,
-        override val envVars: Map<String, String>,
-        override val args: List<KommandArg>
-    ) : Kommand() {
-
-    }
-
-    data class Piped(
-        val commands: List<Kommand>,
-        override val envVars: Map<String, String> = mutableMapOf(),
-        override val command: String = "pipe",
-        override val args: List<KommandArg> = mutableListOf()
-    ) : Kommand()
-}
-
-class KommandBaseBuilder {
+class KommandBuilder {
     var name by Delegates.notNull<String>()
-    var envVars = mapOf<String, String>()
     var args = listOf<KommandArg>()
 
-    fun build() = Kommand.Base(name, envVars, args)
-}
-
-class KommandPipedBuilder {
-    var commands by Delegates.notNull<List<Kommand>>()
-    var name by Delegates.notNull<String>()
-    var envVars = mapOf<String, String>()
-    var args = listOf<KommandArg>()
-
-    fun build() = Kommand.Piped(commands, envVars, name, args)
+    fun build() = Kommand(name, args)
 }
 
 fun Kommand.toCommandString(): String {
     return "$command ${args.joinToString(" ") { "-$it" }}"
 }
 
-inline fun kommand(block: KommandBaseBuilder.() -> Unit) = KommandBaseBuilder().apply(block).build()
-inline fun piped(block: KommandPipedBuilder.() -> Unit) = KommandPipedBuilder().apply(block).build()
+inline fun kommand(block: KommandBuilder.() -> Unit) = KommandBuilder().apply(block).build()
 
+inline fun kommands(block: KommandBuilder.() -> Unit) = KommandBuilder().apply(block).build().toKommands()
 
-fun Kommand.pipe(): Kommand.Piped {
-    return when (this) {
-        is Kommand.Piped -> {
-            return this
-        }
-        else -> {
-            Kommand.Piped(
-                commands = mutableListOf(this),
-                envVars = this.envVars
-            )
-        }
-    }
-}
-
-
-inline fun ls(block: KommandArgsBuilder.() -> Unit) = kommand {
-    name = "ls"
-    args = KommandArgsBuilder().apply(block).build()
-}
-
-inline fun Kommand.Piped.ls(crossinline block: KommandArgsBuilder.() -> Unit): Kommand = copy(
-    commands = commands.plus(
-        kommand {
-            name = "ls"
-            args = KommandArgsBuilder().apply(block).build()
-        }
-    )
-)
-
-inline fun Kommand.Piped.grep(crossinline block: KommandArgsBuilder.() -> Unit): Kommand = copy(
-    commands = commands.plus(
-        kommand {
-            name = "grep"
-            args = KommandArgsBuilder().apply(block).build()
-        }
-    )
-)
-
-inline fun Kommand.Piped.wc(crossinline block: KommandArgsBuilder.() -> Unit): Kommand = copy(
-    commands = commands.plus(
-        kommand {
-            name = "wc"
-            args = KommandArgsBuilder().apply(block).build()
-        }
-    )
-)
-
-fun Kommand.Base.toProcessBuilder(): ProcessBuilder = ProcessBuilder()
+fun Kommand.toProcessBuilder(): ProcessBuilder = ProcessBuilder()
     .command(command, *args.toArgs().toTypedArray())
     .redirectErrorStream(true)
 
-fun Kommand.Piped.startPipeline(): List<Process> {
-    return ProcessBuilder.startPipeline(commands.map { (it as Kommand.Base).toProcessBuilder() })
+fun Kommands.startPipeline(): List<Process> {
+    return ProcessBuilder.startPipeline(commands.map { it.toProcessBuilder() })
 }
 
-inline fun <reified T : Kommand> T.out(): Flow<String> = channelFlow {
-    val k = this@out
-    when (k::class) {
-        Kommand.Base::class -> launch(Dispatchers.IO) {
-            (k as Kommand.Base)
-                .toProcessBuilder()
-                .start()
-                .inputStream
-                .bufferedReader()
-                .useLines {  lines ->
-                    lines.forEach {  line ->
-                        send(line)
-                    }
+fun Kommands.out(): Flow<String> = channelFlow {
+    launch(Dispatchers.IO) {
+        this@out
+            .startPipeline()
+            .last()
+            .inputStream
+            .bufferedReader()
+            .useLines {  lines ->
+                lines.forEach {  line ->
+                    send(line)
                 }
-
-        }
-        Kommand.Piped::class -> launch(Dispatchers.IO) {
-            (k as Kommand.Piped)
-                .startPipeline()
-                .last()
-                .inputStream
-                .bufferedReader()
-                .useLines {  lines ->
-                    lines.forEach {  line ->
-                        send(line)
-                    }
-                }
-        }
-        else -> throw RuntimeException("unimplemented for ${this::class}")
+            }
     }
 }
 
@@ -152,9 +71,9 @@ data class KommandArg(val arg: String, val useDash: Boolean = true)
 
 typealias KommandArgs = List<KommandArg>
 
-fun KommandArgs.toArgs() = map { if (it.useDash) "-${it.arg}" else it.arg }.also { println(it) }
+fun KommandArgs.toArgs() = map { if (it.useDash) "-${it.arg}" else it.arg }.also {logger.debug { it } }
 
-class KommandArgsBuilder {
+open class KommandArgsBuilder {
     private val args = mutableListOf<KommandArg>()
 
     infix fun KommandArg.of(param: String): Pair<KommandArg, KommandArg> {
@@ -182,13 +101,13 @@ class KommandArgsBuilder {
 fun main() = runBlocking {
 
     ls { -"a" }
-        .pipe()
         .grep { -"e" of "gradle" }
-        .pipe()
         .wc { -"w" }
         .out()
         .collect { println(it) }
 
+    ping { add("google.com") }
+        .out()
+        .collect { println(it) }
 
-    Unit
 }
