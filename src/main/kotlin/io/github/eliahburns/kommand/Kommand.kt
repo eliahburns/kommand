@@ -74,10 +74,6 @@ fun Kommands.out(): Flow<String> = channelFlow {
     }
 }
 
-fun <T : Kommand> Flow<T>.env(block: MutableMap<String, String>.() -> Unit): Flow<Kommand> {
-    TODO()
-}
-
 data class KommandArg(val arg: String, val useDash: Boolean = true)
 
 typealias KommandArgs = List<KommandArg>
