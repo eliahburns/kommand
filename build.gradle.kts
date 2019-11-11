@@ -15,6 +15,8 @@ repositories {
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.2")
+    implementation("io.github.microutils:kotlin-logging:1.7.6")
+    implementation("org.slf4j:slf4j-simple:1.6.1")
 
 }
 
