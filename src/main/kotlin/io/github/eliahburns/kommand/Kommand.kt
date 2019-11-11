@@ -1,134 +1,114 @@
 package io.github.eliahburns.kommand
 
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.channels.SendChannel
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.onCompletion
-import kotlinx.coroutines.flow.onStart
+import io.github.eliahburns.kommand.dsl.shell.grep
+import io.github.eliahburns.kommand.dsl.shell.ls
+import io.github.eliahburns.kommand.dsl.shell.ping
+import io.github.eliahburns.kommand.dsl.shell.wc
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.runBlocking
 import mu.KotlinLogging
-import java.io.Closeable
-import java.io.InputStream
-import java.lang.IllegalStateException
-import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
-import kotlin.coroutines.suspendCoroutine
-
+import kotlin.properties.Delegates
 
 private val logger = KotlinLogging.logger {  }
 
-class Kommand internal constructor(val args: List<String>) : Closeable {
+data class Kommand(
+    val command: String,
+    val args: List<KommandArg>
+)
 
-    private val p by lazy {
-        ProcessBuilder()
-            .command(args)
-            .redirectErrorStream(true)
-            .start()
-    }
-    private val br by lazy { p.inputStream.bufferedReader() }
+fun Kommand.toKommands() = Kommands(listOf(this), mapOf())
 
-    fun execute(): Kommand {
-        logger.info { "executing command ${args.first()} with pid: ${p.pid()}" }
-        return this
-    }
+data class Kommands(
+    val commands: List<Kommand>,
+    val envVars: Map<String, String>
+)
 
-    override fun close() {
-        p.destroy()
-    }
+class KommandBuilder {
+    var name by Delegates.notNull<String>()
+    var args = listOf<KommandArg>()
 
-    fun kill() = close()
-    fun forceKill() = p.destroyForcibly()
+    fun build() = Kommand(name, args)
+}
 
-    private val processInputChannel = Channel<String>(Channel.BUFFERED)
-    private val processInput get() = p.outputStream
+fun Kommand.toCommandString(): String {
+    return "$command ${args.joinToString(" ") { "-$it" }}"
+}
 
-    val input get() = processInputChannel as SendChannel<String>
+inline fun kommand(block: KommandBuilder.() -> Unit) = KommandBuilder().apply(block).build()
 
+inline fun kommands(block: KommandBuilder.() -> Unit) = KommandBuilder().apply(block).build().toKommands()
 
-    suspend fun collectInputWith(context: CoroutineContext): Kommand = withContext(context) {
-        launch {
-            processInput.use { pi ->
-                pi.bufferedWriter().use { writer ->
-                    for (nextInput in processInputChannel) {
-                        logger.info { "writing $nextInput to command ${args.first()}" }
-                        writer.write(nextInput)
-                        writer.flush()
-                    }
+fun Kommand.toProcessBuilder(): ProcessBuilder = ProcessBuilder()
+    .command(command, *args.toArgs().toTypedArray())
+    .redirectErrorStream(true)
+
+fun Kommands.startPipeline(): List<Process> {
+    return ProcessBuilder.startPipeline(commands.map { it.toProcessBuilder() })
+}
+
+fun Kommands.out(): Flow<String> = channelFlow {
+    launch(Dispatchers.IO) {
+        this@out
+            .startPipeline()
+            .last()
+            .inputStream
+            .bufferedReader()
+            .useLines {  lines ->
+                lines.forEach {  line ->
+                    send(line)
                 }
             }
-        }
-        this@Kommand
+    }
+}
+
+fun <T : Kommand> Flow<T>.env(block: MutableMap<String, String>.() -> Unit): Flow<Kommand> {
+    TODO()
+}
+
+data class KommandArg(val arg: String, val useDash: Boolean = true)
+
+typealias KommandArgs = List<KommandArg>
+
+fun KommandArgs.toArgs() = map { if (it.useDash) "-${it.arg}" else it.arg }.also { logger.debug { it } }
+
+open class KommandArgsBuilder {
+    private val args = mutableListOf<KommandArg>()
+
+    infix fun KommandArg.of(param: String): Pair<KommandArg, KommandArg> {
+        val p = this to KommandArg(param, false)
+        args += p.second
+        return p
     }
 
-    suspend fun exitValue() = suspendCoroutine<Int> { cont ->
-        val exit = p.onExit().thenAcceptAsync {
-            try {
-                cont.resume(it.exitValue())
-            } catch (e: IllegalStateException) {
-                cont.resumeWithException(e)
-            }
-        }
+    operator fun String.unaryMinus(): KommandArg {
+        val kArg = KommandArg(this)
+        args += kArg
+        return kArg
     }
 
-    fun output(): Flow<String> = br
-        .lineSequence()
-        .asFlow()
-        .onStart {
-            logger.info { "collecting output from process with pid: ${p.pid()}" }
-        }
-        .onCompletion {
-            logger.info { "completing output from process with pid: ${p.pid()}" }
-            logger.info { "closing buffered used for output of process with pid: ${p.pid()}" }
-            br.close()
-            kill()
-        }
+    fun add(flag: String): KommandArg {
+        val kArg = KommandArg(flag, false)
+        args += kArg
+        return kArg
+    }
+
+    fun build(): KommandArgs = args.toList()
 }
 
 
+// TODO: clean up and move into real tests
+fun main() = runBlocking {
 
-class PipedKommand {
+    ls { -"a" }
+        .grep { -"e" of "gradle" }
+        .wc { -"w" }
+        .out()
+        .collect { println(it) }
+
+    ping { add("google.com") }
+        .out()
+        .collect { println(it) }
 
 }
-
-fun Flow<Kommand>.pipe(): PipedKommand {
-
-    TODO()
-}
-
-fun Flow<List<PipedKommand>>.out(): Flow<String> {
-    TODO()
-}
-
-fun Flow<Kommand>.env(block: MutableMap<String, String>.() -> Unit): Flow<Kommand> {
-    TODO()
-}
-
-
-
-
-
-
-
-
-internal fun InputStream.lineSequence(): Sequence<String> {
-    return this.bufferedReader()
-        .lineSequence()
-}
-
-
-//fun Kommand.outputLines() =
-//    process.inputStream
-//        .use { stream ->
-//            stream.bufferedReader()
-//                .use { reader ->
-//                    reader.lines().asSequence()
-//                }
-//        }
-//
-//fun Kommand.outputLinesFlow() = outputLines().asFlow()
-//
-//
-//fun Kommand.allOutput() = process.inputStream.use { String(it.readAllBytes()) }

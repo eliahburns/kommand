@@ -1,15 +1,16 @@
 package io.github.eliahburns.kommand.dsl.shell
 
-import io.github.eliahburns.kommand.simple.KommandArgsBuilder
-import io.github.eliahburns.kommand.simple.Kommands
-import io.github.eliahburns.kommand.simple.kommand
-import io.github.eliahburns.kommand.simple.kommands
+import io.github.eliahburns.kommand.KommandArgsBuilder
+import io.github.eliahburns.kommand.Kommands
+import io.github.eliahburns.kommand.kommand
+import io.github.eliahburns.kommand.kommands
 
 
-inline fun uniq(block: KommandArgsBuilder.() -> Unit) = kommands {
-    name = "uniq"
-    args = KommandArgsBuilder().apply(block).build()
-}
+inline fun uniq(block: KommandArgsBuilder.() -> Unit) =
+    kommands {
+        name = "uniq"
+        args = KommandArgsBuilder().apply(block).build()
+    }
 
 inline fun Kommands.uniq(crossinline block: KommandArgsBuilder.() -> Unit): Kommands = copy(
     commands = commands +
@@ -19,10 +20,11 @@ inline fun Kommands.uniq(crossinline block: KommandArgsBuilder.() -> Unit): Komm
             }
 )
 
-inline fun sort(block: KommandArgsBuilder.() -> Unit) = kommands {
-    name = "sort"
-    args = KommandArgsBuilder().apply(block).build()
-}
+inline fun sort(block: KommandArgsBuilder.() -> Unit) =
+    kommands {
+        name = "sort"
+        args = KommandArgsBuilder().apply(block).build()
+    }
 
 inline fun Kommands.sort(crossinline block: KommandArgsBuilder.() -> Unit): Kommands = copy(
     commands = commands +
@@ -32,10 +34,11 @@ inline fun Kommands.sort(crossinline block: KommandArgsBuilder.() -> Unit): Komm
             }
 )
 
-inline fun diff(block: KommandArgsBuilder.() -> Unit) = kommands {
-    name = "diff"
-    args = KommandArgsBuilder().apply(block).build()
-}
+inline fun diff(block: KommandArgsBuilder.() -> Unit) =
+    kommands {
+        name = "diff"
+        args = KommandArgsBuilder().apply(block).build()
+    }
 
 inline fun Kommands.diff(crossinline block: KommandArgsBuilder.() -> Unit): Kommands = copy(
     commands = commands +
@@ -45,10 +48,11 @@ inline fun Kommands.diff(crossinline block: KommandArgsBuilder.() -> Unit): Komm
             }
 )
 
-inline fun comp(block: KommandArgsBuilder.() -> Unit) = kommands {
-    name = "comp"
-    args = KommandArgsBuilder().apply(block).build()
-}
+inline fun comp(block: KommandArgsBuilder.() -> Unit) =
+    kommands {
+        name = "comp"
+        args = KommandArgsBuilder().apply(block).build()
+    }
 
 inline fun Kommands.comp(crossinline block: KommandArgsBuilder.() -> Unit): Kommands = copy(
     commands = commands +
@@ -58,10 +62,11 @@ inline fun Kommands.comp(crossinline block: KommandArgsBuilder.() -> Unit): Komm
             }
 )
 
-inline fun cut(block: KommandArgsBuilder.() -> Unit) = kommands {
-    name = "cut"
-    args = KommandArgsBuilder().apply(block).build()
-}
+inline fun cut(block: KommandArgsBuilder.() -> Unit) =
+    kommands {
+        name = "cut"
+        args = KommandArgsBuilder().apply(block).build()
+    }
 
 inline fun Kommands.cut(crossinline block: KommandArgsBuilder.() -> Unit): Kommands = copy(
     commands = commands +
@@ -71,10 +76,11 @@ inline fun Kommands.cut(crossinline block: KommandArgsBuilder.() -> Unit): Komma
             }
 )
 
-inline fun sed(block: KommandArgsBuilder.() -> Unit) = kommands {
-    name = "sed"
-    args = KommandArgsBuilder().apply(block).build()
-}
+inline fun sed(block: KommandArgsBuilder.() -> Unit) =
+    kommands {
+        name = "sed"
+        args = KommandArgsBuilder().apply(block).build()
+    }
 
 inline fun Kommands.sed(crossinline block: KommandArgsBuilder.() -> Unit): Kommands = copy(
     commands = commands +
