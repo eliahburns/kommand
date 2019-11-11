@@ -31,7 +31,7 @@ fun main() = runBlocking {
 
     // run a custom script and observe the output
     cd(dir = "$HOME/bash-scripts")
-        .kommands { "./some_bash_script.sh" } 
+        .kommands { add("./some_bash_script.sh") } 
         .out()
         .collect { println(it) }
 
