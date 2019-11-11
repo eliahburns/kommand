@@ -5,19 +5,17 @@ import io.github.eliahburns.kommand.Kommands
 import io.github.eliahburns.kommand.kommand
 import io.github.eliahburns.kommand.kommands
 
-// TODO: include host
 inline fun ping(host: String = "", block: KommandArgsBuilder.() -> Unit) =
     kommands {
         name = "ping"
-        args = KommandArgsBuilder().apply(block).build()
+        args = KommandArgsBuilder().also { if (host.isNotEmpty()) it.add(host) }.apply(block).build()
     }
 
-// TODO: include host
 inline fun Kommands.ping(host: String = "", crossinline block: KommandArgsBuilder.() -> Unit): Kommands = copy(
     commands = commands +
             kommand {
                 name = "ping"
-                args = KommandArgsBuilder().apply(block).build()
+                args = KommandArgsBuilder().also { if (host.isNotEmpty()) it.add(host) }.apply(block).build()
             }
 )
 

@@ -25,7 +25,7 @@ fun main() = runBlocking {
         .collect { println(it) }
 
     // print the output from pinging google.com to check our network connection
-    ping(host = "google.com")
+    ping(host = "google.com") { }
         .out()
         .collect { println(it) }
 

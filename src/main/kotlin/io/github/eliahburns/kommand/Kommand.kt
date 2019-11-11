@@ -107,7 +107,7 @@ fun main() = runBlocking {
         .out()
         .collect { println(it) }
 
-    ping { add("google.com") }
+    ping(host = "google.com") { }
         .out()
         .collect { println(it) }
 
