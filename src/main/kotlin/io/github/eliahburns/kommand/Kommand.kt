@@ -1,6 +1,7 @@
 package io.github.eliahburns.kommand
 
 import io.github.eliahburns.kommand.dsl.builtin.cd
+import io.github.eliahburns.kommand.dsl.export
 import io.github.eliahburns.kommand.dsl.grep
 import io.github.eliahburns.kommand.dsl.ls
 import io.github.eliahburns.kommand.dsl.wc
@@ -97,5 +98,19 @@ fun main() = runBlocking {
 //        .out()
 //        .take(3)
 //        .collect { println(it) }
+
+    shell {
+        env {
+            "LD_LIBRARY_PATH" to "LD_LIBRARY_PATH:/some/other/dynamic/lib"
+            "JAVA_HOME" to "path/to/java/we/want/to/use"
+        }
+    }
+        .export { "KRB5CC" to "/dev/null" }
+        .env
+        .entries
+        .forEach { println(it) }
+
+
+
 
 }

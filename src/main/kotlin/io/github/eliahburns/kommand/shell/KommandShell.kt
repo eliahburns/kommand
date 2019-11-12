@@ -75,15 +75,3 @@ class ShellEnvironmentBuilder {
 
 fun shell(block: KommandShellBuilder.() -> Unit) = KommandShellBuilder().apply(block).build()
 
-
-// Example usage
-val s = shell {
-    env {
-        "thus" to "that"
-        "other" to "either"
-    }
-}
-
-
-
-

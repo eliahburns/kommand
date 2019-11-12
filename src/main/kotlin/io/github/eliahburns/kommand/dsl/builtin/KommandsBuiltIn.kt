@@ -15,4 +15,4 @@ inline fun KommandShell.cd(dir: String? = null, crossinline block: KommandArgsBu
     cd(newDir)
 }
 
-fun KommandShell.env() = System.getenv().entries.map { it.key to it.value }
+fun KommandShell.systemEnv() = System.getenv().entries.map { it.key to it.value }
