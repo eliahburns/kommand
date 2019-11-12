@@ -1,91 +1,49 @@
 package io.github.eliahburns.kommand.dsl.shell
 
 import io.github.eliahburns.kommand.KommandArgsBuilder
-import io.github.eliahburns.kommand.Kommands
 import io.github.eliahburns.kommand.kommand
-import io.github.eliahburns.kommand.kommands
+import io.github.eliahburns.kommand.shell.KommandShell
+import io.github.eliahburns.kommand.shell.copy
 
 
-inline fun uniq(block: KommandArgsBuilder.() -> Unit) =
-    kommands {
+inline fun KommandShell.uniq(crossinline block: KommandArgsBuilder.() -> Unit) = copy {
+    +kommand {
         name = "uniq"
         args = KommandArgsBuilder().apply(block).build()
     }
+}
 
-inline fun Kommands.uniq(crossinline block: KommandArgsBuilder.() -> Unit): Kommands = copy(
-    commands = commands +
-            kommand {
-                name = "uniq"
-                args = KommandArgsBuilder().apply(block).build()
-            }
-)
-
-inline fun sort(block: KommandArgsBuilder.() -> Unit) =
-    kommands {
+inline fun KommandShell.sort(crossinline block: KommandArgsBuilder.() -> Unit) = copy {
+    +kommand {
         name = "sort"
         args = KommandArgsBuilder().apply(block).build()
     }
+}
 
-inline fun Kommands.sort(crossinline block: KommandArgsBuilder.() -> Unit): Kommands = copy(
-    commands = commands +
-            kommand {
-                name = "sort"
-                args = KommandArgsBuilder().apply(block).build()
-            }
-)
-
-inline fun diff(block: KommandArgsBuilder.() -> Unit) =
-    kommands {
+inline fun KommandShell.diff(crossinline block: KommandArgsBuilder.() -> Unit) = copy {
+    +kommand {
         name = "diff"
         args = KommandArgsBuilder().apply(block).build()
     }
+}
 
-inline fun Kommands.diff(crossinline block: KommandArgsBuilder.() -> Unit): Kommands = copy(
-    commands = commands +
-            kommand {
-                name = "diff"
-                args = KommandArgsBuilder().apply(block).build()
-            }
-)
-
-inline fun comp(block: KommandArgsBuilder.() -> Unit) =
-    kommands {
+inline fun KommandShell.comp(crossinline block: KommandArgsBuilder.() -> Unit) = copy {
+    +kommand {
         name = "comp"
         args = KommandArgsBuilder().apply(block).build()
     }
+}
 
-inline fun Kommands.comp(crossinline block: KommandArgsBuilder.() -> Unit): Kommands = copy(
-    commands = commands +
-            kommand {
-                name = "comp"
-                args = KommandArgsBuilder().apply(block).build()
-            }
-)
-
-inline fun cut(block: KommandArgsBuilder.() -> Unit) =
-    kommands {
+inline fun KommandShell.cut(crossinline block: KommandArgsBuilder.() -> Unit) = copy {
+    +kommand {
         name = "cut"
         args = KommandArgsBuilder().apply(block).build()
     }
+}
 
-inline fun Kommands.cut(crossinline block: KommandArgsBuilder.() -> Unit): Kommands = copy(
-    commands = commands +
-            kommand {
-                name = "cut"
-                args = KommandArgsBuilder().apply(block).build()
-            }
-)
-
-inline fun sed(block: KommandArgsBuilder.() -> Unit) =
-    kommands {
+inline fun KommandShell.sed(crossinline block: KommandArgsBuilder.() -> Unit) = copy {
+    +kommand {
         name = "sed"
         args = KommandArgsBuilder().apply(block).build()
     }
-
-inline fun Kommands.sed(crossinline block: KommandArgsBuilder.() -> Unit): Kommands = copy(
-    commands = commands +
-            kommand {
-                name = "sed"
-                args = KommandArgsBuilder().apply(block).build()
-            }
-)
+}

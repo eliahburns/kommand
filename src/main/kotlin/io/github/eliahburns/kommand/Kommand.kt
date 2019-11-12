@@ -1,12 +1,10 @@
 package io.github.eliahburns.kommand
 
-import io.github.eliahburns.kommand.dsl.shell.grep
-import io.github.eliahburns.kommand.dsl.shell.ls
-import io.github.eliahburns.kommand.dsl.shell.ping
-import io.github.eliahburns.kommand.dsl.shell.wc
-import kotlinx.coroutines.Dispatchers
+import io.github.eliahburns.kommand.dsl.shell.*
+import io.github.eliahburns.kommand.process.out
+import io.github.eliahburns.kommand.shell.ShellDsl
+import io.github.eliahburns.kommand.shell.shell
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import mu.KotlinLogging
 import kotlin.properties.Delegates
@@ -18,13 +16,7 @@ data class Kommand(
     val args: List<KommandArg>
 )
 
-fun Kommand.toKommands() = Kommands(listOf(this), mapOf())
-
-data class Kommands(
-    val commands: List<Kommand>,
-    val envVars: Map<String, String>
-)
-
+@ShellDsl
 class KommandBuilder {
     var name by Delegates.notNull<String>()
     var args = listOf<KommandArg>()
@@ -36,43 +28,6 @@ fun Kommand.toCommandString(): String {
     return "$command ${args.joinToString(" ") { "-$it" }}"
 }
 
-inline fun kommand(block: KommandBuilder.() -> Unit) = KommandBuilder().apply(block).build()
-
-inline fun kommands(block: KommandBuilder.() -> Unit) = KommandBuilder().apply(block).build().toKommands()
-
-fun Kommand.toProcessBuilder(): ProcessBuilder = ProcessBuilder()
-    .command(command, *args.toArgs().toTypedArray())
-    .redirectErrorStream(true)
-
-fun Kommands.startPipeline(): List<Process> {
-    return ProcessBuilder.startPipeline(commands.map { it.toProcessBuilder() })
-}
-
-fun Kommands.out(): Flow<String> = channelFlow {
-
-    val processes = this@out.startPipeline()
-    processes.forEach { proc -> logger.debug { "started process with pid ${proc.pid()} on invocation of 'out()'" } }
-
-    launch(Dispatchers.IO) {
-        processes
-            .last()
-            .inputStream
-            .bufferedReader()
-            .useLines {  lines ->
-                lines.forEach {  line ->
-                    send(line)
-                }
-            }
-    }
-
-    invokeOnClose { t ->
-        t?.let { logger.debug { "closing 'out()' after $t" } }
-        processes.forEach { proc ->
-            logger.debug { "stopping process with pid ${proc.pid()} on 'out()' close" }
-            proc.destroy()
-        }
-    }
-}
 
 data class KommandArg(val arg: String, val useDash: Boolean = true)
 
@@ -80,6 +35,7 @@ typealias KommandArgs = List<KommandArg>
 
 fun KommandArgs.toArgs() = map { if (it.useDash) "-${it.arg}" else it.arg }.also { logger.debug { it } }
 
+@ShellDsl
 open class KommandArgsBuilder {
     private val args = mutableListOf<KommandArg>()
 
@@ -104,19 +60,28 @@ open class KommandArgsBuilder {
     fun build(): KommandArgs = args.toList()
 }
 
+inline fun kommand(crossinline block: KommandBuilder.() -> Unit) = KommandBuilder().apply(block).build()
 
 // TODO: clean up and move into real tests
 fun main() = runBlocking {
 
-    ls { -"a" }
+    shell { }
+        .ls { -"a" }
         .grep { -"e" of "gradle" }
         .wc { -"w" }
         .out()
         .collect { println(it) }
 
-    ping(host = "google.com") { }
+    shell { }
+        .cd(dir = "..") { }
+        .ls { }
         .out()
-        .take(3)
         .collect { println(it) }
+
+//    shell { }
+//        .ping(host = "google.com") { }
+//        .out()
+//        .take(3)
+//        .collect { println(it) }
 
 }

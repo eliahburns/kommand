@@ -1,78 +1,52 @@
 package io.github.eliahburns.kommand.dsl.shell
 
 import io.github.eliahburns.kommand.KommandArgsBuilder
-import io.github.eliahburns.kommand.Kommands
 import io.github.eliahburns.kommand.kommand
-import io.github.eliahburns.kommand.kommands
+import io.github.eliahburns.kommand.shell.KommandShell
+import io.github.eliahburns.kommand.shell.copy
 
+inline fun KommandShell.cd(dir: String? = null, crossinline block: KommandArgsBuilder.() -> Unit) = copy {
+    val newDir = if (dir != null) {
+        dir
+    } else {
+        val ka = KommandArgsBuilder().apply(block).also{ b -> dir?.let { b.add(it) } }.build()
+        check (ka.count() == 1) { "no directory provided for cd (chdir)" }
+        ka.first().arg
+    }
+    cd(newDir)
+}
 
-inline fun mkdir(block: KommandArgsBuilder.() -> Unit) =
-    kommands {
+inline fun KommandShell.mkdir(crossinline block: KommandArgsBuilder.() -> Unit) = copy {
+    +kommand {
         name = "mkdir"
         args = KommandArgsBuilder().apply(block).build()
     }
+}
 
-inline fun Kommands.mkdir(crossinline block: KommandArgsBuilder.() -> Unit): Kommands = copy(
-    commands = commands +
-            kommand {
-                name = "mkdir"
-                args = KommandArgsBuilder().apply(block).build()
-            }
-)
-
-inline fun rm(block: KommandArgsBuilder.() -> Unit) =
-    kommands {
+inline fun KommandShell.rm(crossinline block: KommandArgsBuilder.() -> Unit) = copy {
+    +kommand {
         name = "rm"
         args = KommandArgsBuilder().apply(block).build()
     }
+}
 
-inline fun Kommands.rm(crossinline block: KommandArgsBuilder.() -> Unit): Kommands = copy(
-    commands = commands +
-            kommand {
-                name = "rm"
-                args = KommandArgsBuilder().apply(block).build()
-            }
-)
-
-inline fun du(block: KommandArgsBuilder.() -> Unit) =
-    kommands {
+inline fun KommandShell.du(crossinline block: KommandArgsBuilder.() -> Unit) = copy {
+    +kommand {
         name = "du"
         args = KommandArgsBuilder().apply(block).build()
     }
+}
 
-inline fun Kommands.du(crossinline block: KommandArgsBuilder.() -> Unit): Kommands = copy(
-    commands = commands +
-            kommand {
-                name = "du"
-                args = KommandArgsBuilder().apply(block).build()
-            }
-)
-
-inline fun df(block: KommandArgsBuilder.() -> Unit) =
-    kommands {
+inline fun KommandShell.df(crossinline block: KommandArgsBuilder.() -> Unit) = copy {
+    +kommand {
         name = "df"
         args = KommandArgsBuilder().apply(block).build()
     }
+}
 
-inline fun Kommands.df(crossinline block: KommandArgsBuilder.() -> Unit): Kommands = copy(
-    commands = commands +
-            kommand {
-                name = "df"
-                args = KommandArgsBuilder().apply(block).build()
-            }
-)
-
-
-inline fun tree(block: KommandArgsBuilder.() -> Unit) =
-    kommands {
+inline fun KommandShell.tree(crossinline block: KommandArgsBuilder.() -> Unit) = copy {
+    +kommand {
         name = "tree"
         args = KommandArgsBuilder().apply(block).build()
     }
-
-inline fun Kommands.tree(crossinline block: KommandArgsBuilder.() -> Unit): Kommands = copy(
-    commands = commands +
-            kommand {
-                name = "tree"
-                args = KommandArgsBuilder().apply(block).build()
-            }
-)
+}
