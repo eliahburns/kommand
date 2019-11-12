@@ -1,8 +1,8 @@
 package io.github.eliahburns.kommand.dsl.builtin
 
-import io.github.eliahburns.kommand.KommandArgsBuilder
 import io.github.eliahburns.kommand.shell.KommandShell
-import io.github.eliahburns.kommand.shell.copy
+import io.github.eliahburns.kommand.util.args.KommandArgsBuilder
+import io.github.eliahburns.kommand.util.copy
 
 inline fun KommandShell.cd(dir: String? = null, crossinline block: KommandArgsBuilder.() -> Unit) = copy {
     val newDir = if (dir != null) {
@@ -15,4 +15,7 @@ inline fun KommandShell.cd(dir: String? = null, crossinline block: KommandArgsBu
     cd(newDir)
 }
 
-fun KommandShell.systemEnv() = System.getenv().entries.map { it.key to it.value }
+inline fun KommandShell.chdir(dir: String? = null, crossinline block: KommandArgsBuilder.() -> Unit) = copy {
+    cd(dir, block)
+}
+
