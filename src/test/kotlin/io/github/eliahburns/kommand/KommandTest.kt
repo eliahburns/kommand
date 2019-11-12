@@ -20,7 +20,7 @@ class KommandTest : WordSpec() {
                 runBlocking {
                     val fileName = "test.txt"
                     shell { }
-                        .ls { add(fileName) }
+                        .ls { +fileName }
                         .out()
                         .toList()
                         .also {
@@ -28,11 +28,11 @@ class KommandTest : WordSpec() {
                             it.first() shouldBe "ls: test.txt: No such file or directory"
                         }
                     shell { }
-                        .touch { add(fileName) }
+                        .touch { +fileName }
                         .out()
                         .collect()
                     shell { }
-                        .ls { add(fileName) }
+                        .ls { +fileName }
                         .out()
                         .toList()
                         .also {
@@ -40,11 +40,11 @@ class KommandTest : WordSpec() {
                             it.first() shouldBe "test.txt"
                         }
                     shell { }
-                        .rm { add(fileName) }
+                        .rm { +fileName }
                         .out()
                         .collect()
                     shell { }
-                        .ls { add(fileName) }
+                        .ls { +fileName }
                         .out()
                         .toList()
                         .also {

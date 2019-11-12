@@ -39,7 +39,7 @@ fun main() = runBlocking {
 ```kotlin
     shell { }
         .cd(dir = "some/path/to/bash-scripts") { }
-        .kommand { add("./some_bash_script.sh") } 
+        .kommand { +"./some_bash_script.sh" } 
         .out()
         .collect { println(it) }
 ```
@@ -114,3 +114,35 @@ fun main() = runBlocking {
             println("top ten log files: $it")
         }
 ```
+
+### Argument Syntax
+
+There are currently three main styles to using arguments with a given command: 
+- using a dash, as in `-"l"`, which is equivalent to typing `-l` at the command line
+    - note that a `-` is inserted before the argument string with this method
+- using a plus, as in `+"--some-flag"` or `+"file.txt"`, which is equivalent to typing `--some-flag` or 
+`file.txt` at the command line
+    - note that no `-` is inserted before the argument string here 
+- using a dashed-string with infix `of` followed by another string, as in `-"e" of "*"`, which is 
+equivalent to typing `-e *` at the command line when using `grep -e *` for example and `*` is a pattern
+provided in conjunction with the `-e` arg (but this can be used any place that requires the same format)
+    - the actual method signature for this is `infix fun String.of(value: String): KommandArg`
+  
+   
+Given the above, we can assume that a command such as 
+```kotlin
+    shell { }
+        .grep {   
+            -"i" 
+            +"mr_tube" 
+            +"users.txt"
+        }
+``` 
+would be equivalent to entering `grep -i mr_tube users.txt` at the command line.
+   
+    
+Some `Kommand` methods have explicit parameters, such as `cd(dir: String)`--this is
+mostly only currently in the spots where it (usually) doesn't make sense to use the 
+command without that argument. 
+
+    
