@@ -64,7 +64,6 @@ fun main() = runBlocking {
 
 #### Add/update variables in environment and print out for sanity check:
 ```kotlin
-
     shell { 
         env {
             "LD_LIBRARY_PATH" to "LD_LIBRARY_PATH:/some/other/dynamic/lib"
@@ -74,14 +73,15 @@ fun main() = runBlocking {
         .env
         .entries
         .forEach { println(it) }
-    // prints out:
-    // LD_LIBRARY_PATH=LD_LIBRARY_PATH:/some/other/dynamic/lib
-    // JAVA_HOME=path/to/java/we/want/to/use
+```
+```bash
+# Output: 
+# LD_LIBRARY_PATH=LD_LIBRARY_PATH:/some/other/dynamic/lib
+# JAVA_HOME=path/to/java/we/want/to/use
 ```
 
 #### Add/update variables on the fly with the `export()` method:
 ```kotlin
-
     shell {
         env {
             "LD_LIBRARY_PATH" to "LD_LIBRARY_PATH:/some/other/dynamic/lib"
@@ -92,17 +92,17 @@ fun main() = runBlocking {
         .env
         .entries
         .forEach { println(it) }
-    // prints out:
-    // LD_LIBRARY_PATH=LD_LIBRARY_PATH:/some/other/dynamic/lib
-    // JAVA_HOME=path/to/java/we/want/to/use
-    // KRB5CC=/dev/null 
-
+```
+```bash
+# Output: 
+# LD_LIBRARY_PATH=LD_LIBRARY_PATH:/some/other/dynamic/lib
+# JAVA_HOME=path/to/java/we/want/to/use
+# KRB5CC=/dev/null 
 ```
 
 
 #### Take a certain number of outputs and then automatically destroy all the processes that were used to get them:
 ```kotlin
-
     shell { }
         .cd(dir = "../log") { }
         .ls { }
@@ -113,8 +113,4 @@ fun main() = runBlocking {
         .collect { 
             println("top ten log files: $it")
         }
-
-
-
-
 ```
