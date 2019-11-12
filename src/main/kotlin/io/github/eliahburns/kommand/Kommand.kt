@@ -1,8 +1,13 @@
 package io.github.eliahburns.kommand
 
-import io.github.eliahburns.kommand.dsl.shell.*
+import io.github.eliahburns.kommand.dsl.builtin.cd
+import io.github.eliahburns.kommand.dsl.grep
+import io.github.eliahburns.kommand.dsl.ls
+import io.github.eliahburns.kommand.dsl.wc
 import io.github.eliahburns.kommand.process.out
+import io.github.eliahburns.kommand.shell.KommandShell
 import io.github.eliahburns.kommand.shell.ShellDsl
+import io.github.eliahburns.kommand.shell.copy
 import io.github.eliahburns.kommand.shell.shell
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.runBlocking
@@ -62,6 +67,14 @@ open class KommandArgsBuilder {
 
 inline fun kommand(crossinline block: KommandBuilder.() -> Unit) = KommandBuilder().apply(block).build()
 
+/** To add [Kommand]s to the [KommandShell] that don't have concrete extension methods.*/
+inline fun KommandShell.kommand(command: String, crossinline block: KommandArgsBuilder.() -> Unit) = copy {
+    +kommand {
+        name = command
+        args = KommandArgsBuilder().apply(block).build()
+    }
+}
+
 // TODO: clean up and move into real tests
 fun main() = runBlocking {
 
@@ -75,6 +88,7 @@ fun main() = runBlocking {
     shell { }
         .cd(dir = "..") { }
         .ls { }
+        .kommand("wc") { -"w" }
         .out()
         .collect { println(it) }
 

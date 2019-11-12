@@ -12,28 +12,54 @@ transform it into.
 It has all of the hits, but may be missing something you're looking for. In that case, 
 feel free to extend it and submit a pull request. 
  
-
-#### Examplezz:
+## Examples:
+ 
+#### check the number of gradle files in the current directory
 ```kotlin
 fun main() = runBlocking {
 
-    // check the number of gradle files in the current directory
-    ls { -"a" }
+    shell { }
+        .ls { -"a" }
         .grep { -"e" of "gradle" }
         .wc { -"w" }
         .out()
         .collect { println(it) }
-
-    // print the output from pinging google.com to check our network connection
-    ping(host = "google.com") { }
-        .out()
-        .collect { println(it) }
-
-    // run a custom script and observe the output
-    cd(dir = "$HOME/bash-scripts")
-        .kommands { add("./some_bash_script.sh") } 
-        .out()
-        .collect { println(it) }
-
 }
 ```
+
+#### Print the output from pinging google.com to check our network connection:
+```kotlin
+    shell { }
+        .ping(host = "google.com") { }
+        .out()
+        .collect { println(it) }
+```
+
+#### Run a custom script and observe the output:
+```kotlin
+    shell { }
+        .cd(dir = "some/path/to/bash-scripts") { }
+        .kommand { add("./some_bash_script.sh") } 
+        .out()
+        .collect { println(it) }
+```
+
+#### Go up one directory and run ls:
+```kotlin
+    shell { }
+        .cd(dir = "..") { }
+        .ls { }
+        .out()
+        .collect { println(it) }
+```
+    
+#### Execute a command without a special extension method using the generic `kommmand()` method:
+```kotlin
+    shell { }
+        .ls { }
+        .kommand("wc") { -"w" }
+        .out()
+        .collect { println(it) }
+```
+
+

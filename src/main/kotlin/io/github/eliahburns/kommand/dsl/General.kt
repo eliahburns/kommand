@@ -1,4 +1,4 @@
-package io.github.eliahburns.kommand.dsl.shell
+package io.github.eliahburns.kommand.dsl
 
 import io.github.eliahburns.kommand.*
 import io.github.eliahburns.kommand.shell.KommandShell
@@ -19,6 +19,20 @@ inline fun KommandShell.grep(crossinline block: KommandArgsBuilder.() -> Unit) =
     }
 }
 
+inline fun KommandShell.tail(crossinline block: KommandArgsBuilder.() -> Unit) = copy {
+    +kommand {
+        name = "tail"
+        args = KommandArgsBuilder().apply(block).build()
+    }
+}
+
+inline fun KommandShell.head(crossinline block: KommandArgsBuilder.() -> Unit) = copy {
+    +kommand {
+        name = "head"
+        args = KommandArgsBuilder().apply(block).build()
+    }
+}
+
 inline fun KommandShell.wc(crossinline block: KommandArgsBuilder.() -> Unit) = copy {
     +kommand {
         name = "wc"
@@ -34,7 +48,7 @@ class ExportBuilder {
     var export: Export? = null
 
     infix fun String.to(value: String): Export {
-        export = this to value
+        export = Pair(this, value)
         return export!!
     }
     fun build() = export ?: Export("", "")

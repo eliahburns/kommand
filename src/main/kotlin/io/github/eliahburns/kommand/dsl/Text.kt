@@ -1,4 +1,4 @@
-package io.github.eliahburns.kommand.dsl.shell
+package io.github.eliahburns.kommand.dsl
 
 import io.github.eliahburns.kommand.KommandArgsBuilder
 import io.github.eliahburns.kommand.kommand

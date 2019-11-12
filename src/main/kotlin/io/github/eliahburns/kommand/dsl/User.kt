@@ -1,4 +1,4 @@
-package io.github.eliahburns.kommand.dsl.shell
+package io.github.eliahburns.kommand.dsl
 
 import io.github.eliahburns.kommand.KommandArgsBuilder
 import io.github.eliahburns.kommand.kommand
@@ -26,7 +26,6 @@ inline fun KommandShell.chmod(crossinline block: KommandArgsBuilder.() -> Unit):
         args = KommandArgsBuilder().apply(block).build()
     }
 }
-
 
 inline fun KommandShell.users(crossinline block: KommandArgsBuilder.() -> Unit): KommandShell = copy {
     +kommand {
