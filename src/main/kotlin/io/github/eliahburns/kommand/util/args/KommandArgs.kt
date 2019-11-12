@@ -1,6 +1,7 @@
 package io.github.eliahburns.kommand.util.args
 
 import io.github.eliahburns.kommand.shell.KommandShellDsl
+import io.github.eliahburns.kommand.Kommand
 
 /** Representation of an argument that belongs to some [Kommand] */
 data class KommandArg(val arg: String, val useDash: Boolean = true)

@@ -19,7 +19,8 @@ fun KommandShell.systemEnv() = System.getenv().entries.map { it.key to it.value 
 fun mutableEnv() = mutableMapOf<String, String>()
 
 fun KommandShell.toBuilder(dir: String? = null) =
-    KommandShellBuilder(env.toMutableMap(), commands, dir ?: currentWorkingDir, previousWorkingDir)
+    KommandShellBuilder(env.toMutableMap(), commands,
+        dir?.let { this.workingDirectory.chdir(dir) } ?: workingDirectory)
 
 fun KommandShell.copy(workingDirectory: String? = null, block: KommandShellBuilder.() -> Unit) =
     toBuilder(dir = workingDirectory).apply(block).build()
