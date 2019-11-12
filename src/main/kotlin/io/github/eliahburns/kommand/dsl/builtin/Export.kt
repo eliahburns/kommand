@@ -8,7 +8,7 @@ fun Export.isEmpty() = first.isEmpty() && second.isEmpty()
 
 class ExportBuilder {
 
-    var export: Export? = null
+    private var export: Export? = null
 
     infix fun String.to(value: String): Export {
         export = Pair(this, value)

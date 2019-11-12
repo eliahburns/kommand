@@ -36,5 +36,12 @@ open class KommandArgsBuilder {
         return kArg
     }
 
+    /** Add an argument to a [Kommand] that would be given WITHOUT a dash [-] */
+    inline operator fun String.unaryPlus(): KommandArg {
+        val kArg = KommandArg(this, false)
+        args += kArg
+        return kArg
+    }
+
     fun build(): KommandArgs = args.toList()
 }

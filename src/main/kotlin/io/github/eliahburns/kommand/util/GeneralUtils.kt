@@ -10,11 +10,11 @@ private val logger = KotlinLogging.logger {  }
 
 fun currentWorkingDir(): String = System.getProperty("user.dir")
 
-fun Kommand.toCommandString(): String {
-    return "$command ${args.joinToString(" ") { "-$it" }}"
-}
+fun userHomeDir(): String = System.getProperty("user.home")
 
-fun KommandShell.systemEnv() = System.getenv().entries.map { it.key to it.value }
+fun systemEnv() = System.getenv().entries.map { it.key to it.value }
+
+fun Kommand.toCommandString(): String = "$command ${args.joinToString(" ") { "-$it" }}"
 
 fun mutableEnv() = mutableMapOf<String, String>()
 

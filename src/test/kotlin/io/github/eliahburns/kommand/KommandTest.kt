@@ -5,11 +5,9 @@ import io.github.eliahburns.kommand.dsl.rm
 import io.github.eliahburns.kommand.dsl.touch
 import io.github.eliahburns.kommand.shell.out
 import io.github.eliahburns.kommand.shell.shell
-import io.github.eliahburns.kommand.util.currentWorkingDir
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.WordSpec
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 

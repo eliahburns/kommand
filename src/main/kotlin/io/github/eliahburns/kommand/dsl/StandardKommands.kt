@@ -152,3 +152,20 @@ inline fun KommandShell.scp(crossinline block: KommandArgsBuilder.() -> Unit)= c
 inline fun KommandShell.touch(crossinline block: KommandArgsBuilder.() -> Unit)= copy {
     +internalKommand("touch", block)
 }
+
+inline fun KommandShell.source(crossinline block: KommandArgsBuilder.() -> Unit)= copy {
+    +internalKommand("source", block)
+}
+
+inline fun KommandShell.which(crossinline block: KommandArgsBuilder.() -> Unit)= copy {
+    +internalKommand("which", block)
+}
+
+inline fun KommandShell.locate(crossinline block: KommandArgsBuilder.() -> Unit)= copy {
+    +internalKommand("locate", block)
+}
+
+inline fun KommandShell.find(crossinline block: KommandArgsBuilder.() -> Unit)= copy {
+    +internalKommand("find", block)
+}
+
