@@ -148,3 +148,7 @@ inline fun KommandShell.ssh(crossinline block: KommandArgsBuilder.() -> Unit) = 
 inline fun KommandShell.scp(crossinline block: KommandArgsBuilder.() -> Unit)= copy {
     +internalKommand("scp", block)
 }
+
+inline fun KommandShell.touch(crossinline block: KommandArgsBuilder.() -> Unit)= copy {
+    +internalKommand("touch", block)
+}
