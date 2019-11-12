@@ -1,4 +1,4 @@
-# Kommand ~ Kotlin Shell DSL
+# Kommand ~ Kotlin Command Line DSL
 
 Kommand is essentially Java's `Process` class and its associated libs wrapped up
 in a nicer package. 
