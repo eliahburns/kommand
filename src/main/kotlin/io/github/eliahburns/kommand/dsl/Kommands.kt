@@ -6,166 +6,167 @@ import io.github.eliahburns.kommand.util.args.KommandArgsBuilder
 import io.github.eliahburns.kommand.util.copy
 
 inline fun KommandShell.ls(crossinline block: KommandArgsBuilder.() -> Unit) = copy {
-    +internalKommand("ls", block)
+    +internalKommand("ls", workingDirectory.current, environment, block)
 }
 
 inline fun KommandShell.grep(crossinline block: KommandArgsBuilder.() -> Unit) = copy {
-    +internalKommand("grep", block)
+    +internalKommand("grep", workingDirectory.current, environment, block)
 }
 
 inline fun KommandShell.tail(crossinline block: KommandArgsBuilder.() -> Unit) = copy {
-    +internalKommand("tail", block)
+    +internalKommand("tail", workingDirectory.current, environment, block)
 }
 
 inline fun KommandShell.head(crossinline block: KommandArgsBuilder.() -> Unit) = copy {
-    +internalKommand("head", block)
+    +internalKommand("head", workingDirectory.current, environment, block)
 }
 
 inline fun KommandShell.wc(crossinline block: KommandArgsBuilder.() -> Unit) = copy {
-    +internalKommand("wc", block)
+    +internalKommand("wc", workingDirectory.current, environment, block)
 }
 
 inline fun KommandShell.ps(crossinline block: KommandArgsBuilder.() -> Unit) = copy {
-    +internalKommand("ps", block)
+    +internalKommand("ps", workingDirectory.current, environment, block)
 }
 
 inline fun KommandShell.kill(crossinline block: KommandArgsBuilder.() -> Unit) = copy {
-    +internalKommand("kill", block)
+    +internalKommand("kill", workingDirectory.current, environment, block)
 }
 
 inline fun KommandShell.disown(crossinline block: KommandArgsBuilder.() -> Unit) = copy {
-    +internalKommand("disown", block)
+    +internalKommand("disown", workingDirectory.current, environment, block)
 }
 
 inline fun KommandShell.su(crossinline block: KommandArgsBuilder.() -> Unit): KommandShell = copy {
-    +internalKommand("su", block)
+    +internalKommand("su", workingDirectory.current, environment, block)
 }
 
 inline fun KommandShell.sudo(crossinline block: KommandArgsBuilder.() -> Unit): KommandShell = copy {
-    +internalKommand("sudo", block)
+    +internalKommand("sudo", workingDirectory.current, environment, block)
 }
 
 inline fun KommandShell.chmod(crossinline block: KommandArgsBuilder.() -> Unit): KommandShell = copy {
-    +internalKommand("chmod", block)
+    +internalKommand("chmod", workingDirectory.current, environment, block)
 }
 
 inline fun KommandShell.users(crossinline block: KommandArgsBuilder.() -> Unit): KommandShell = copy {
-    +internalKommand("users", block)
+    +internalKommand("users", workingDirectory.current, environment, block)
 }
 
 inline fun KommandShell.useradd(crossinline block: KommandArgsBuilder.() -> Unit): KommandShell = copy {
-    +internalKommand("useradd", block)
+    +internalKommand("useradd", workingDirectory.current, environment, block)
 }
 
 inline fun KommandShell.userdel(crossinline block: KommandArgsBuilder.() -> Unit): KommandShell = copy {
-    +internalKommand("userdel", block)
+    +internalKommand("userdel", workingDirectory.current, environment, block)
 }
 
 inline fun KommandShell.groups(crossinline block: KommandArgsBuilder.() -> Unit): KommandShell = copy {
-    +internalKommand("groups", block)
+    +internalKommand("groups", workingDirectory.current, environment, block)
 }
 
 inline fun KommandShell.groupadd(crossinline block: KommandArgsBuilder.() -> Unit): KommandShell = copy {
-    +internalKommand("groupadd", block)
+    +internalKommand("groupadd", workingDirectory.current, environment, block)
 }
 
 inline fun KommandShell.groupdel(crossinline block: KommandArgsBuilder.() -> Unit): KommandShell = copy {
-    +internalKommand("groupdel", block)
+    +internalKommand("groupdel", workingDirectory.current, environment, block)
 }
 
+// TODO: include host as first argument
 inline fun KommandShell.ping(host: String = "", crossinline block: KommandArgsBuilder.() -> Unit) = copy {
-    +internalKommand("ping", block)
+    +internalKommand("ping", workingDirectory.current, environment, block)
 }
 
 inline fun KommandShell.wget(crossinline block: KommandArgsBuilder.() -> Unit) = copy {
-    +internalKommand("wget", block)
+    +internalKommand("wget", workingDirectory.current, environment, block)
 }
 
 inline fun KommandShell.curl(crossinline block: KommandArgsBuilder.() -> Unit) = copy {
-    +internalKommand("curl", block)
+    +internalKommand("curl", workingDirectory.current, environment, block)
 }
 
 inline fun KommandShell.tar(crossinline block: KommandArgsBuilder.() -> Unit) = copy {
-    +internalKommand("tar", block)
+    +internalKommand("tar", workingDirectory.current, environment, block)
 }
 
 inline fun KommandShell.gzip(crossinline block: KommandArgsBuilder.() -> Unit) = copy {
-    +internalKommand("gzip", block)
+    +internalKommand("gzip", workingDirectory.current, environment, block)
 }
 
 inline fun KommandShell.gunzip(crossinline block: KommandArgsBuilder.() -> Unit) = copy {
-    +internalKommand("gunzip", block)
+    +internalKommand("gunzip", workingDirectory.current, environment, block)
 }
 
 inline fun KommandShell.uniq(crossinline block: KommandArgsBuilder.() -> Unit) = copy {
-    +internalKommand("uniq", block)
+    +internalKommand("uniq", workingDirectory.current, environment, block)
 }
 
 inline fun KommandShell.sort(crossinline block: KommandArgsBuilder.() -> Unit) = copy {
-    +internalKommand("sort", block)
+    +internalKommand("sort", workingDirectory.current, environment, block)
 }
 
 inline fun KommandShell.diff(crossinline block: KommandArgsBuilder.() -> Unit) = copy {
-    +internalKommand("diff", block)
+    +internalKommand("diff", workingDirectory.current, environment, block)
 }
 
 inline fun KommandShell.comp(crossinline block: KommandArgsBuilder.() -> Unit) = copy {
-    +internalKommand("comp", block)
+    +internalKommand("comp", workingDirectory.current, environment, block)
 }
 
 inline fun KommandShell.cut(crossinline block: KommandArgsBuilder.() -> Unit) = copy {
-    +internalKommand("cut", block)
+    +internalKommand("cut", workingDirectory.current, environment, block)
 }
 
 inline fun KommandShell.sed(crossinline block: KommandArgsBuilder.() -> Unit) = copy {
-    +internalKommand("sed", block)
+    +internalKommand("sed", workingDirectory.current, environment, block)
 }
 
 inline fun KommandShell.mkdir(crossinline block: KommandArgsBuilder.() -> Unit) = copy {
-    +internalKommand("mkdir", block)
+    +internalKommand("mkdir", workingDirectory.current, environment, block)
 }
 
 inline fun KommandShell.rm(crossinline block: KommandArgsBuilder.() -> Unit) = copy {
-    +internalKommand("rm", block)
+    +internalKommand("rm", workingDirectory.current, environment, block)
 }
 
 inline fun KommandShell.du(crossinline block: KommandArgsBuilder.() -> Unit) = copy {
-    +internalKommand("du", block)
+    +internalKommand("du", workingDirectory.current, environment, block)
 }
 
 inline fun KommandShell.df(crossinline block: KommandArgsBuilder.() -> Unit) = copy {
-    +internalKommand("df", block)
+    +internalKommand("df", workingDirectory.current, environment, block)
 }
 
 inline fun KommandShell.tree(crossinline block: KommandArgsBuilder.() -> Unit) = copy {
-    +internalKommand("tree", block)
+    +internalKommand("tree", workingDirectory.current, environment, block)
 }
 
 inline fun KommandShell.ssh(crossinline block: KommandArgsBuilder.() -> Unit) = copy {
-    +internalKommand("ssh", block)
+    +internalKommand("ssh", workingDirectory.current, environment, block)
 }
 
 inline fun KommandShell.scp(crossinline block: KommandArgsBuilder.() -> Unit)= copy {
-    +internalKommand("scp", block)
+    +internalKommand("scp", workingDirectory.current, environment, block)
 }
 
 inline fun KommandShell.touch(crossinline block: KommandArgsBuilder.() -> Unit)= copy {
-    +internalKommand("touch", block)
+    +internalKommand("touch", workingDirectory.current, environment, block)
 }
 
 inline fun KommandShell.source(crossinline block: KommandArgsBuilder.() -> Unit)= copy {
-    +internalKommand("source", block)
+    +internalKommand("source", workingDirectory.current, environment, block)
 }
 
 inline fun KommandShell.which(crossinline block: KommandArgsBuilder.() -> Unit)= copy {
-    +internalKommand("which", block)
+    +internalKommand("which", workingDirectory.current, environment, block)
 }
 
 inline fun KommandShell.locate(crossinline block: KommandArgsBuilder.() -> Unit)= copy {
-    +internalKommand("locate", block)
+    +internalKommand("locate", workingDirectory.current, environment, block)
 }
 
 inline fun KommandShell.find(crossinline block: KommandArgsBuilder.() -> Unit)= copy {
-    +internalKommand("find", block)
+    +internalKommand("find", workingDirectory.current, environment, block)
 }
 

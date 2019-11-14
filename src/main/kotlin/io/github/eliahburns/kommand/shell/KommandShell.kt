@@ -1,6 +1,5 @@
 package io.github.eliahburns.kommand.shell
 
-import io.github.eliahburns.kommand.util.currentWorkingDir
 import io.github.eliahburns.kommand.Kommand
 import io.github.eliahburns.kommand.util.WorkingDirectory
 import io.github.eliahburns.kommand.util.chdir
@@ -25,14 +24,14 @@ typealias Kommands = List<Kommand>
 typealias ShellEnvironment = Map<String, String>
 
 data class KommandShell(
-    val env: ShellEnvironment = DEFAULT_ENV,
+    val environment: ShellEnvironment = DEFAULT_ENV,
     val commands: Kommands = DEFAULT_COMMANDS,
     val workingDirectory: WorkingDirectory = WorkingDirectory()
 )
 
 @KommandShellDsl
 class KommandShellBuilder(
-    private val env: MutableMap<String, String> = mutableEnv(),
+    private val environment: MutableMap<String, String> = mutableEnv(),
     private val commands: Kommands = DEFAULT_COMMANDS,
     private var workingDirectory: WorkingDirectory = WorkingDirectory()
 ) {
@@ -42,8 +41,8 @@ class KommandShellBuilder(
     /** Add environment variables to the shell */
     fun env(block: ShellEnvironmentBuilder.() -> Unit): ShellEnvironment {
         val se = ShellEnvironmentBuilder().apply(block).build().toMutableMap()
-        env.putAll(se)
-        return env
+        environment.putAll(se)
+        return environment
     }
 
     /** change the working directory of the shell */
@@ -57,7 +56,7 @@ class KommandShellBuilder(
     }
 
     fun build() =
-        KommandShell(env.toMap(),commands + additionalCommands, workingDirectory)
+        KommandShell(environment.toMap(),commands + additionalCommands, workingDirectory)
 }
 
 @KommandShellDsl
@@ -78,7 +77,7 @@ fun shell(block: KommandShellBuilder.() -> Unit) = KommandShellBuilder().apply(b
 /** Fetch the output from the pipeline of [Kommand]s in the [KommandShell] and start their underlying processes */
 fun KommandShell.out(): Flow<String> = channelFlow {
 
-    val processes = this@out.commands.startPipeline(this@out.workingDirectory.current)
+    val processes = this@out.commands.startPipeline()
     processes.forEach { proc -> logger.debug { "started process with pid ${proc.pid()} on invocation of 'out()'" } }
 
     launch(Dispatchers.IO) {

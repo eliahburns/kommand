@@ -18,5 +18,5 @@ class ExportBuilder {
 }
 
 inline fun KommandShell.export(crossinline block: ExportBuilder.() -> Unit) = copy(
-    env = env + ExportBuilder().apply(block).build()
+    environment = environment + ExportBuilder().apply(block).build()
 )

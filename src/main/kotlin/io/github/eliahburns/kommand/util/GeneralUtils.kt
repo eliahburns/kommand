@@ -19,7 +19,7 @@ fun Kommand.toCommandString(): String = "$command ${args.joinToString(" ") { "-$
 fun mutableEnv() = mutableMapOf<String, String>()
 
 fun KommandShell.toBuilder(dir: String? = null) =
-    KommandShellBuilder(env.toMutableMap(), commands,
+    KommandShellBuilder(environment.toMutableMap(), commands,
         dir?.let { this.workingDirectory.chdir(dir) } ?: workingDirectory)
 
 fun KommandShell.copy(workingDirectory: String? = null, block: KommandShellBuilder.() -> Unit) =
